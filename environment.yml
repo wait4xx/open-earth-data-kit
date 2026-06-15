@@ -1,0 +1,9 @@
+name: meteo-download
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - pip
+  - pytest
+  - pip:
+      - -e .

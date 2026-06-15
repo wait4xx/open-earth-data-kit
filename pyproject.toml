@@ -1,0 +1,19 @@
+[project]
+name = "open-earth-data-kit"
+version = "0.1.0"
+description = "Unified CLI toolkit for public meteorological, oceanographic, climate and environmental data access."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6.0"]
+opendap = ["xarray>=2024.1.0", "netCDF4>=1.6.0"]
+icechunk = ["xarray>=2024.1.0", "icechunk>=0.2.0", "zarr>=2.16.0", "netCDF4>=1.6.0", "dask>=2024.1.0"]
+
+[project.scripts]
+meteo = "meteo_download.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
