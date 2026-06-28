@@ -18,7 +18,7 @@
 
 | 问题 | 平台化后的处理方式 |
 |---|---|
-| 每个数据源一个脚本，参数不统一 | 用 `meteo` CLI 统一入口 |
+| 每个数据源一个脚本，参数不统一 | 用 `oedk` CLI 统一入口 |
 | README 里有链接，但代码无法识别 | 用 `catalog/sources.json` 结构化维护 |
 | 下载状态不可追踪 | 用 SQLite 记录任务、文件和失败原因 |
 | 新数据源越来越多 | 优先新增 catalog 条目，必要时新增协议适配器 |
@@ -30,7 +30,7 @@
 
 ```text
 ┌────────────────────┐
-│      meteo CLI      │
+│      oedk CLI      │
 │ list/info/plan/...  │
 └─────────┬──────────┘
           │
@@ -48,7 +48,7 @@
 └─────────┬──────────┘
           │
 ┌─────────▼──────────┐
-│ SQLite Task State   │  .meteo-download/state.db
+│ SQLite Task State   │  .oedk/state.db
 └────────────────────┘
 ```
 
@@ -60,7 +60,7 @@
 
 ```bash
 conda env create -f environment.yml
-conda activate meteo-download
+conda activate oedk
 ```
 
 如果你已经在当前 conda 环境中工作：
@@ -84,19 +84,19 @@ pip install -e ".[icechunk]"  # 后续 Icechunk/Zarr 导出能力
 列出可直连数据源：
 
 ```bash
-meteo list --support downloadable
+oedk list --support downloadable
 ```
 
 查看某个数据源：
 
 ```bash
-meteo info era5_ncar_sfc
+oedk info era5_ncar_sfc
 ```
 
 生成下载计划：
 
 ```bash
-meteo plan gfs_aws_archive \
+oedk plan gfs_aws_archive \
   --prefix gfs.20240101/00/atmos/ \
   --extensions .grib2 \
   --max-files 5
@@ -105,7 +105,7 @@ meteo plan gfs_aws_archive \
 执行下载：
 
 ```bash
-meteo download gfs_aws_archive \
+oedk download gfs_aws_archive \
   --prefix gfs.20240101/00/atmos/ \
   --extensions .grib2 \
   --max-files 5 \
@@ -115,7 +115,7 @@ meteo download gfs_aws_archive \
 对目录型 HTTP 数据源，可以临时覆盖入口目录：
 
 ```bash
-meteo plan ecmwf_open_ifs \
+oedk plan ecmwf_open_ifs \
   --endpoint-url https://data.ecmwf.int/forecasts/20240601/00z/ifs/0p25/oper/ \
   --extensions .grib2 \
   --max-files 10
@@ -124,7 +124,7 @@ meteo plan ecmwf_open_ifs \
 提交到外部下载器：
 
 ```bash
-meteo download ecmwf_open_ifs \
+oedk download ecmwf_open_ifs \
   --endpoint-url https://data.ecmwf.int/forecasts/20240601/00z/ifs/0p25/oper/ \
   --backend external \
   --tool xdm \
@@ -135,8 +135,8 @@ meteo download ecmwf_open_ifs \
 查看任务：
 
 ```bash
-meteo tasks list
-meteo tasks show 1
+oedk tasks list
+oedk tasks show 1
 ```
 
 ### Zarr/Icechunk 性能说明
@@ -148,7 +148,7 @@ Planette ERA5 的月平均数据远端 chunk 通常是 `time=12, lat=721, lon=14
 - 下载较大时间段或较完整空间范围时，Zarr/Icechunk 的体验更合理。
 - 用 `--workers 8` 或更高值提高并发，但不要无限调大，避免远端限速。
 - 优先用 `--format zarr` 保存大数据；需要兼容传统工具时再导出 NetCDF。
-- 真实下载时直接调用 conda 环境 Python，可看到实时日志：`/home/wait4x/miniconda3/envs/climate/bin/python -m meteo_download ...`。
+- 真实下载时直接调用 conda 环境 Python，可看到实时日志：`/home/wait4x/miniconda3/envs/climate/bin/python -m oedk ...`。
 
 ---
 
@@ -229,8 +229,8 @@ python sources/download_from_opendap.py \
 
 ```bash
 python -m pytest
-python -m meteo_download catalog validate
-python -m meteo_download doctor
+python -m oedk catalog validate
+python -m oedk doctor
 ```
 
 新增数据源时优先修改 `catalog/sources.json`，不要直接新增独立脚本。只有现有协议无法覆盖时，才新增适配器。

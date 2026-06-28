@@ -1,6 +1,6 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
-.meteo-download/
+.oedk/
 downloads/
 *.part

@@ -9,7 +9,7 @@ from pathlib import Path
 from .models import DownloadRequest, PlannedFile
 
 
-DEFAULT_STATE_DIR = Path(".meteo-download")
+DEFAULT_STATE_DIR = Path(".oedk")
 
 
 class StateStore:

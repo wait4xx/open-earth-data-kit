@@ -5,7 +5,7 @@ import re
 import urllib.parse
 import urllib.request
 
-from meteo_download.models import DownloadPlan, DownloadRequest, PlannedFile
+from oedk.models import DownloadPlan, DownloadRequest, PlannedFile
 from .base import Adapter
 
 

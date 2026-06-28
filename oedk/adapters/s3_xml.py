@@ -6,7 +6,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
-from meteo_download.models import DownloadPlan, DownloadRequest, PlannedFile
+from oedk.models import DownloadPlan, DownloadRequest, PlannedFile
 from .base import Adapter
 
 

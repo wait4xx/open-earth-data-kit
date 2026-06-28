@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from meteo_download.models import DownloadPlan, DownloadRequest
+from oedk.models import DownloadPlan, DownloadRequest
 
 
 class Adapter(ABC):

@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from meteo_download.catalog import find_source
-from meteo_download.models import DownloadRequest, PlannedFile
-from meteo_download.state import StateStore
+from oedk.catalog import find_source
+from oedk.models import DownloadRequest, PlannedFile
+from oedk.state import StateStore
 
 
 def test_state_store_creates_task(tmp_path: Path):

@@ -1,4 +1,4 @@
-from meteo_download.catalog import load_sources, validate_sources
+from oedk.catalog import load_sources, validate_sources
 
 
 def test_catalog_is_valid():

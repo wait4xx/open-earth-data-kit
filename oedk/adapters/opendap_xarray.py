@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from meteo_download.models import DownloadPlan, DownloadRequest, PlannedFile
+from oedk.models import DownloadPlan, DownloadRequest, PlannedFile
 from .base import Adapter
 
 

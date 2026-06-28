@@ -1,4 +1,4 @@
-name: meteo-download
+name: oedk
 channels:
   - conda-forge
 dependencies:

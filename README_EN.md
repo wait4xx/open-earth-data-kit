@@ -18,7 +18,7 @@ This project grew out of a public Earth-system data guide covering meteorologica
 
 | Problem | Platform Approach |
 |---|---|
-| One script per source, inconsistent parameters | A single `meteo` CLI |
+| One script per source, inconsistent parameters | A single `oedk` CLI |
 | Links exist only in README | Structured `catalog/sources.json` |
 | No task audit trail | SQLite task and file state |
 | Growing source coverage | Add catalog entries first, adapters only when needed |
@@ -30,7 +30,7 @@ This project grew out of a public Earth-system data guide covering meteorologica
 
 ```text
 ┌────────────────────┐
-│      meteo CLI      │
+│      oedk CLI      │
 │ list/info/plan/...  │
 └─────────┬──────────┘
           │
@@ -48,7 +48,7 @@ This project grew out of a public Earth-system data guide covering meteorologica
 └─────────┬──────────┘
           │
 ┌─────────▼──────────┐
-│ SQLite Task State   │  .meteo-download/state.db
+│ SQLite Task State   │  .oedk/state.db
 └────────────────────┘
 ```
 
@@ -60,7 +60,7 @@ Recommended conda environment:
 
 ```bash
 conda env create -f environment.yml
-conda activate meteo-download
+conda activate oedk
 ```
 
 If you are already working inside your current conda environment:
@@ -84,19 +84,19 @@ pip install -e ".[icechunk]"
 List directly downloadable sources:
 
 ```bash
-meteo list --support downloadable
+oedk list --support downloadable
 ```
 
 Show source details:
 
 ```bash
-meteo info era5_ncar_sfc
+oedk info era5_ncar_sfc
 ```
 
 Create a plan:
 
 ```bash
-meteo plan gfs_aws_archive \
+oedk plan gfs_aws_archive \
   --prefix gfs.20240101/00/atmos/ \
   --extensions .grib2 \
   --max-files 5
@@ -105,7 +105,7 @@ meteo plan gfs_aws_archive \
 Download:
 
 ```bash
-meteo download gfs_aws_archive \
+oedk download gfs_aws_archive \
   --prefix gfs.20240101/00/atmos/ \
   --extensions .grib2 \
   --max-files 5 \
@@ -115,7 +115,7 @@ meteo download gfs_aws_archive \
 Override a directory endpoint for HTTP sources:
 
 ```bash
-meteo plan ecmwf_open_ifs \
+oedk plan ecmwf_open_ifs \
   --endpoint-url https://data.ecmwf.int/forecasts/20240601/00z/ifs/0p25/oper/ \
   --extensions .grib2 \
   --max-files 10
@@ -124,7 +124,7 @@ meteo plan ecmwf_open_ifs \
 Submit files to an external downloader:
 
 ```bash
-meteo download ecmwf_open_ifs \
+oedk download ecmwf_open_ifs \
   --endpoint-url https://data.ecmwf.int/forecasts/20240601/00z/ifs/0p25/oper/ \
   --backend external \
   --tool xdm \
@@ -135,8 +135,8 @@ meteo download ecmwf_open_ifs \
 Inspect tasks:
 
 ```bash
-meteo tasks list
-meteo tasks show 1
+oedk tasks list
+oedk tasks show 1
 ```
 
 ### Zarr/Icechunk Performance Notes
@@ -148,7 +148,7 @@ Recommendations:
 - Zarr/Icechunk is more useful for larger time ranges or broader spatial domains.
 - Use `--workers 8` or higher for more concurrency, but avoid unbounded values because remote services may throttle.
 - Prefer `--format zarr` for large outputs; use NetCDF when downstream tools require it.
-- For real-time logs in conda, call the environment Python directly: `/home/wait4x/miniconda3/envs/climate/bin/python -m meteo_download ...`.
+- For real-time logs in conda, call the environment Python directly: `/home/wait4x/miniconda3/envs/climate/bin/python -m oedk ...`.
 
 ---
 
@@ -229,8 +229,8 @@ Support levels:
 
 ```bash
 python -m pytest
-python -m meteo_download catalog validate
-python -m meteo_download doctor
+python -m oedk catalog validate
+python -m oedk doctor
 ```
 
 Add new data sources to `catalog/sources.json` first. Add a new adapter only when the existing protocols cannot cover the source.

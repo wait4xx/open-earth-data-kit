@@ -53,7 +53,7 @@ class Adapter:
 
 After adding an adapter:
 
-- Register it in `meteo_download/adapters/base.py`.
+- Register it in `oedk/adapters/base.py`.
 - Add at least one catalog example.
 - Add unit tests.
 
@@ -62,10 +62,10 @@ After adding an adapter:
 Run before submitting:
 
 ```bash
-conda activate meteo-download  # or use your current conda environment
+conda activate oedk  # or use your current conda environment
 python -m pytest
-python -m meteo_download catalog validate
-python -m meteo_download list --support downloadable
+python -m oedk catalog validate
+python -m oedk list --support downloadable
 ```
 
 Use mock responses for network behavior. Unit tests should not depend on live external services.

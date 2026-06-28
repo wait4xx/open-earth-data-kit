@@ -1,4 +1,4 @@
-from meteo_download.cli import main
+from oedk.cli import main
 
 
 def test_list_command_runs(capsys):

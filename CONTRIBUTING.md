@@ -53,7 +53,7 @@ class Adapter:
 
 新增适配器后必须：
 
-- 在 `meteo_download/adapters/base.py` 注册。
+- 在 `oedk/adapters/base.py` 注册。
 - 添加至少一个 catalog 示例。
 - 添加单元测试。
 
@@ -62,10 +62,10 @@ class Adapter:
 提交前运行：
 
 ```bash
-conda activate meteo-download  # 或使用你当前的 conda 环境
+conda activate oedk  # 或使用你当前的 conda 环境
 python -m pytest
-python -m meteo_download catalog validate
-python -m meteo_download list --support downloadable
+python -m oedk catalog validate
+python -m oedk list --support downloadable
 ```
 
 如果测试依赖网络，请改用 mock 响应，不要让单元测试依赖实时外部数据源。

@@ -74,7 +74,7 @@ def check_opendap_url(url: str, timeout: int = 20) -> tuple[bool, str]:
 
 
 def _read_probe(url: str, timeout: int) -> tuple[str, str]:
-    req = urllib.request.Request(url, headers={"User-Agent": "meteo-opendap-check/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "oedk-opendap-check/1.0"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         content_type = resp.headers.get("content-type", "").lower()
         text = resp.read(4096).decode("utf-8", "ignore").lower()

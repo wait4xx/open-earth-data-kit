@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from meteo_download.models import DownloadPlan, DownloadRequest
+from oedk.models import DownloadPlan, DownloadRequest
 from .base import Adapter
 
 

@@ -186,7 +186,7 @@ def cmd_doctor(_: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="meteo", description="Unified public Earth data download CLI")
+    parser = argparse.ArgumentParser(prog="oedk", description="Unified public Earth data download CLI")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command", required=True)
 
