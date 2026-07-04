@@ -79,6 +79,10 @@ class ExternalToolBackend:
 
     只做"提交 URL"的动作 (``submit``)，不跟踪下载进度 —— 进度由外部工具
     自己的界面管理。适合 Windows 用户借助 IDM/XDM 获得更好的多线程体验。
+
+    注意：``submit`` 是 fire-and-forget —— URL 交给 IDM/XDM 后立即返回，
+    oedk 无法知道外部工具是否真正完成了下载。状态库里的 ``submitted``
+    只表示"已移交"，不代表下载完成。
     """
 
     def __init__(self, tool: str, tool_path: str | None = None):
@@ -93,8 +97,25 @@ class ExternalToolBackend:
             return "xdman" if os.name != "nt" else r"C:\Program Files\XDM\xdman.exe"
         raise ValueError(f"unsupported external tool: {self.tool}")
 
+    def _check_tool_available(self) -> None:
+        """提交前检查外部下载器可执行文件是否存在，不存在则抛清晰错误。
+
+        用 ``shutil.which`` 探测，兼容绝对路径和 PATH 上的裸命令名；
+        避免直接 ``Popen`` 时抛晦涩的 ``[Errno 2] No such file or directory``。
+        """
+        if shutil.which(self.tool_path) is None:
+            raise FileNotFoundError(
+                f"external tool '{self.tool}' not found at '{self.tool_path}'. "
+                f"Install {self.tool.upper()} or pass --tool-path."
+            )
+
     def submit(self, item: PlannedFile, output_dir: Path) -> None:
-        """向外部下载器提交一个 URL，立即返回 (不等待完成)。"""
+        """向外部下载器提交一个 URL，立即返回 (不等待完成)。
+
+        提交前先检查工具是否存在；提交成功后状态记为 ``submitted`` (已
+        移交)，真实下载成败由外部工具自行管理，oedk 无法跟踪。
+        """
+        self._check_tool_available()
         output_dir.mkdir(parents=True, exist_ok=True)
         if self.tool == "idm":
             cmd = [self.tool_path, "/n", "/d", item.url, "/p", str(output_dir.resolve()), "/f", item.filename]
