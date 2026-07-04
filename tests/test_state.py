@@ -1,3 +1,6 @@
+import sqlite3
+
+import pytest
 from pathlib import Path
 
 from oedk.catalog import find_source
@@ -16,3 +19,13 @@ def test_state_store_creates_task(tmp_path: Path):
 
     assert tasks[0]["id"] == task_id
     assert files[0]["filename"] == "a.grib2"
+
+
+def test_state_store_context_manager_closes_connection(tmp_path: Path):
+    with StateStore(tmp_path / "state.db") as store:
+        # 可在 with 块内正常使用
+        store.list_tasks()
+
+    # 退出 with 后连接已关闭，再操作应抛 ProgrammingError
+    with pytest.raises(sqlite3.ProgrammingError):
+        store.list_tasks()
