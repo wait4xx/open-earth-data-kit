@@ -112,6 +112,8 @@ oedk download gfs_aws_archive \
   -o ./downloads/gfs
 ```
 
+默认下载并发执行，线程数由 `--workers` 控制（默认 4），批量拉取多文件时可用 `--workers 8` 提速。
+
 对目录型 HTTP 数据源，可以临时覆盖入口目录：
 
 ```bash

@@ -112,6 +112,8 @@ oedk download gfs_aws_archive \
   -o ./downloads/gfs
 ```
 
+Downloads run concurrently by default; use `--workers` to control the concurrency level (default 4). Use `--workers 8` when pulling many files at once.
+
 Override a directory endpoint for HTTP sources:
 
 ```bash
