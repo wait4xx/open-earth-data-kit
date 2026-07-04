@@ -12,6 +12,7 @@ Adapter 是整个 oedk 的核心扩展点：每种数据访问协议对应一个
 
 from __future__ import annotations
 
+import importlib
 from abc import ABC, abstractmethod
 
 from oedk.models import DownloadPlan, DownloadRequest
@@ -46,31 +47,30 @@ class Adapter(ABC):
         return None
 
 
+# Adapter 注册表：名字 → (模块路径, 类名)。
+# 新增 adapter 时在这里加一行，并在 models.py 的 Protocol 枚举里加对应值；
+# 两者由 test_protocol_enum_matches_adapter_registry 自动校验同步。
+# 用 importlib 惰性导入实现类，保住"零核心运行时依赖"——重库 (xarray /
+# icechunk 等) 只在对应 adapter 真正被使用时才被加载。
+_ADAPTER_REGISTRY: dict[str, tuple[str, str]] = {
+    "http_index": ("oedk.adapters.http_index", "HttpIndexAdapter"),
+    "s3_xml": ("oedk.adapters.s3_xml", "S3XmlAdapter"),
+    "opendap_xarray": ("oedk.adapters.opendap_xarray", "OpendapXarrayAdapter"),
+    "icechunk_zarr": ("oedk.adapters.icechunk_zarr", "IcechunkZarrAdapter"),
+    "manual_auth": ("oedk.adapters.manual_auth", "ManualAuthAdapter"),
+}
+
+
 def adapter_for(name: str) -> Adapter:
-    """按名字构造对应的 adapter 实例 (惰性导入实现类)。
+    """按名字构造对应的 adapter 实例 (通过 importlib 惰性导入实现类)。
 
     ``name`` 通常等于数据源的协议值或其 ``adapter`` 字段。找不到时抛
-    ``KeyError``。每个分支里的 import 都是局部的，确保可选依赖只在
-    真正选择该协议时才被加载。
+    ``KeyError``。实现模块只在真正选择该协议时才被加载，确保可选依赖
+    (xarray / icechunk 等) 不会被无谓地引入。
     """
-    if name == "http_index":
-        from .http_index import HttpIndexAdapter
-
-        return HttpIndexAdapter()
-    if name == "s3_xml":
-        from .s3_xml import S3XmlAdapter
-
-        return S3XmlAdapter()
-    if name == "opendap_xarray":
-        from .opendap_xarray import OpendapXarrayAdapter
-
-        return OpendapXarrayAdapter()
-    if name == "icechunk_zarr":
-        from .icechunk_zarr import IcechunkZarrAdapter
-
-        return IcechunkZarrAdapter()
-    if name == "manual_auth":
-        from .manual_auth import ManualAuthAdapter
-
-        return ManualAuthAdapter()
-    raise KeyError(f"unknown adapter: {name}")
+    try:
+        module_path, class_name = _ADAPTER_REGISTRY[name]
+    except KeyError:
+        raise KeyError(f"unknown adapter: {name}")
+    cls = getattr(importlib.import_module(module_path), class_name)
+    return cls()
